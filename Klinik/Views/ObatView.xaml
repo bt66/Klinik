@@ -35,9 +35,13 @@
             <TextBox Grid.Row="4" Style="{StaticResource InputTextBox}" Text="{Binding ModelObat.harga_satuan, Mode=TwoWay}"/>
         </Grid>
         <Grid Grid.Row="3">
-            <Button Content="INPUT" Command="{Binding InsertCommand}" Style="{StaticResource btnCRUD}" Margin="32,6,0,6"/>
-            <Button Content="UPDATE" Command="{Binding UpdateCommand}" Style="{StaticResource btnCRUD}" Margin="246,6,0,6"/>
-            <Button Content="DELETE" Command="{Binding DeleteCommand}" Style="{StaticResource btnCRUD}" Margin="460,6,0,6"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="477*"/>
+                <ColumnDefinition Width="553*"/>
+            </Grid.ColumnDefinitions>
+            <Button Content="INPUT" Command="{Binding InsertCommand}" Style="{StaticResource btnCRUD}" Margin="32,6,0,0"/>
+            <Button Content="UPDATE" Command="{Binding UpdateCommand}" Style="{StaticResource btnCRUD}" Margin="246,6,0,0"/>
+            <Button Content="DELETE" Command="{Binding DeleteCommand}" Style="{StaticResource btnCRUD}" Margin="460,6,0,0" Grid.ColumnSpan="2"/>
         </Grid>
         <DataGrid Grid.Row="4" HorizontalAlignment="Left" Height="292" Margin="32,10,0,0" VerticalAlignment="Top" Width="970" ItemsSource="{Binding DataObat}" SelectedItem="{Binding ModelObat}"/>
 

@@ -9,13 +9,13 @@ namespace Klinik.ViewModels
 {
     class TransaksiViewModel : BaseViewModel
     {
-        private ObservableCollection<Transaksi> collection;
-        private Transaksi model;
+        private ObservableCollection<Transaksi> dataTransaksi;
+        private Transaksi modelTransaksi;
 
         public TransaksiViewModel()
         {
-            collection = new ObservableCollection<Transaksi>();
-            model = new Transaksi();
+            dataTransaksi = new ObservableCollection<Transaksi>();
+            modelTransaksi = new Transaksi();
             InsertCommand = new Command(async () => await InsertDataAsync());
             UpdateCommand = new Command(async () => await UpdateDataAsync());
             DeleteCommand = new Command(async () => await DeleteDataAsync());
@@ -27,42 +27,42 @@ namespace Klinik.ViewModels
         public ICommand UpdateCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
 
-        public ObservableCollection<Transaksi> Collection
+        public ObservableCollection<Transaksi> DataTransaksi
         {
-            get => collection;
+            get => dataTransaksi;
             set
             {
-                SetProperty(ref collection, value);
+                SetProperty(ref dataTransaksi, value);
             }
         }
 
-        public Transaksi Model
+        public Transaksi ModelTransaksi
         {
-            get => model;
+            get => modelTransaksi;
             set
             {
-                SetProperty(ref model, value);
+                SetProperty(ref modelTransaksi, value);
             }
         }
         private bool check()
         {
             var chk = false;
-            if (model.id_transaksi == null)
+            if (modelTransaksi.id_transaksi == null)
             {
                 MessageBox.Show("ID transaksi can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
                 chk = false;
             }
-            else if (model.id_pembeli == null)
+            else if (modelTransaksi.id_pembeli == null)
             {
                 MessageBox.Show("id pembeli can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
                 chk = false;
             }
-            else if (model.id_obat == null)
+            else if (modelTransaksi.id_obat == null)
             {
                 MessageBox.Show("id obat can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
                 chk = false;
             }
-            else if (model.jumlah == null)
+            else if (modelTransaksi.jumlah == null)
             {
                 MessageBox.Show("jumlah barang can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
                 chk = false;
@@ -85,10 +85,10 @@ namespace Klinik.ViewModels
 
             if (sqlresult.HasRows)
             {
-                collection.Clear();
+                dataTransaksi.Clear();
                 while (sqlresult.Read())
                 {
-                    collection.Add(new Transaksi
+                    dataTransaksi.Add(new Transaksi
                     {
                         id_transaksi = sqlresult[0].ToString(),
                         id_pembeli = sqlresult[1].ToString(),
@@ -113,13 +113,13 @@ namespace Klinik.ViewModels
                 {
                     OpenConnection();
                     await Task.Delay(0);
-                    var query1 = $"SELECT harga_satuan,jumlah FROM Obat WHERE id_obat='{model.id_obat}'";
+                    var query1 = $"SELECT harga_satuan,jumlah FROM Obat WHERE id_obat='{modelTransaksi.id_obat}'";
                     var sqlcmd1 = new SQLiteCommand(query1, Connection);
                     var sqlresult1 = sqlcmd1.ExecuteReader();
 
                     if (sqlresult1.HasRows)
                     {
-                        collection.Clear();
+                        dataTransaksi.Clear();
                         while (sqlresult1.Read())
                         {
                             hargasatuanObat = sqlresult1[0].ToString();
@@ -129,14 +129,14 @@ namespace Klinik.ViewModels
                     CloseConnection();
                     MessageBox.Show(hargasatuanObat, "Data Saved", MessageBoxButton.OK, MessageBoxImage.Information);
                     MessageBox.Show(jumlahStockObat, "Data Saved", MessageBoxButton.OK, MessageBoxImage.Information);
-                    total = int.Parse(hargasatuanObat) * int.Parse(model.jumlah);
+                    total = int.Parse(hargasatuanObat) * int.Parse(modelTransaksi.jumlah);
                     //MessageBox.Show(total, "Data Saved", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     OpenConnection();
                     await Task.Delay(0);
                     var query = $"INSERT INTO Transaksi " +
-                        $"VALUES('{model.id_transaksi}','{model.id_pembeli}','{model.id_obat}','{model.jumlah}','{total}')";
-                    //$"VALUES('T0004','P0002','B0003','{model.jumlah}','{total}')";
+                        $"VALUES('{modelTransaksi.id_transaksi}','{modelTransaksi.id_pembeli}','{modelTransaksi.id_obat}','{modelTransaksi.jumlah}','{total}')";
+                    //$"VALUES('T0004','P0002','B0003','{modelTransaksi.jumlah}','{total}')";
                     var sqlcmd = new SQLiteCommand(query, Connection);
 
                     var sqlresult = sqlcmd.ExecuteNonQuery();
@@ -144,13 +144,13 @@ namespace Klinik.ViewModels
 
 
                     // kurangi stock
-                    total = int.Parse(jumlahStockObat) - int.Parse(model.jumlah);
+                    total = int.Parse(jumlahStockObat) - int.Parse(modelTransaksi.jumlah);
 
                     OpenConnection();
                     await Task.Delay(0);
                     query = $"UPDATE Obat SET " +
                         $"jumlah='{total}' " +
-                        $"WHERE id_obat = '{model.id_obat}'";
+                        $"WHERE id_obat = '{modelTransaksi.id_obat}'";
                     sqlcmd = new SQLiteCommand(query, Connection);
                     sqlresult = sqlcmd.ExecuteNonQuery();
 
@@ -175,12 +175,12 @@ namespace Klinik.ViewModels
                 OpenConnection();
                 await Task.Delay(0);
                 var query = $"UPDATE Transaksi SET " +
-                    $"id_pembeli = '{model.id_pembeli}', " +
-                    $"id_obat = '{model.id_obat}', " +
-                    $"jumlah = '{model.jumlah}', " +
+                    $"id_pembeli = '{modelTransaksi.id_pembeli}', " +
+                    $"id_obat = '{modelTransaksi.id_obat}', " +
+                    $"jumlah = '{modelTransaksi.jumlah}', " +
                     $"total_harga = '{total}' " +
-                    $"WHERE id_transaksi = '{model.id_transaksi}'";
-                //$"VALUES('{model.id_obat}','{model.nama_obat}','{model.khasiat}','{model.jumlah}','{model.harga_satuan}')";
+                    $"WHERE id_transaksi = '{modelTransaksi.id_transaksi}'";
+                //$"VALUES('{modelTransaksi.id_obat}','{modelTransaksi.nama_obat}','{modelTransaksi.khasiat}','{modelTransaksi.jumlah}','{modelTransaksi.harga_satuan}')";
                 var sqlcmd = new SQLiteCommand(query, Connection);
 
                 var sqlresult = sqlcmd.ExecuteNonQuery();
@@ -198,12 +198,12 @@ namespace Klinik.ViewModels
         {
             try
             {
-                if (MessageBox.Show($"yakin ingin menghapus '{model.id_transaksi}' ?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                if (MessageBox.Show($"yakin ingin menghapus '{modelTransaksi.id_transaksi}' ?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     OpenConnection();
                     await Task.Delay(0);
                     var query = $"DELETE FROM Transaksi " +
-                        $"WHERE id_transaksi = '{model.id_transaksi}'";
+                        $"WHERE id_transaksi = '{modelTransaksi.id_transaksi}'";
                     var sqlcmd = new SQLiteCommand(query, Connection);
 
                     var sqlresult = sqlcmd.ExecuteNonQuery();

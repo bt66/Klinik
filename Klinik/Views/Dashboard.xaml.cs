@@ -68,7 +68,7 @@ namespace Klinik.Views
 
         private void btnTransaksi_Click(object sender, RoutedEventArgs e)
         {
-            App.ViewRouting(true, new Views.PembeliView());
+            App.ViewRouting(true, new Views.TransaksiView());
         }
     }
 }

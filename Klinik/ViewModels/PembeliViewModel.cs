@@ -9,13 +9,13 @@ namespace Klinik.ViewModels
 {
     class PembeliViewModel : BaseViewModel
     {
-        private ObservableCollection<Pembeli> collection;
-        private Pembeli model;
+        private ObservableCollection<Pembeli> dataPembeli;
+        private Pembeli modelPembeli;
 
         public PembeliViewModel()
         {
-            collection= new ObservableCollection<Pembeli>();
-            model = new Pembeli();
+            dataPembeli= new ObservableCollection<Pembeli>();
+            modelPembeli = new Pembeli();
             InsertCommand = new Command(async () => await InsertDataAsync());
             UpdateCommand = new Command(async () => await UpdateDataAsync());
             DeleteCommand = new Command(async () => await DeleteDataAsync());
@@ -26,42 +26,42 @@ namespace Klinik.ViewModels
         public ICommand UpdateCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
         public ICommand InsertCommand { get; set; }
-        public ObservableCollection<Pembeli> Collection
+        public ObservableCollection<Pembeli> DataPembeli
         {
-            get => collection;
+            get => dataPembeli;
             set
             {
-                SetProperty(ref collection, value);
+                SetProperty(ref dataPembeli, value);
             }
         }
-        public Pembeli Model
+        public Pembeli ModelPembeli
         {
-            get => model;
+            get => modelPembeli;
             set
             {
-                SetProperty(ref model, value);
+                SetProperty(ref modelPembeli, value);
             }
         }
 
         private bool check()
         {
             var chk = false;
-            if (model.id_pembeli == null)
+            if (modelPembeli.id_pembeli == null)
             {
                 MessageBox.Show("ID pembeli can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
                 chk = false;
             }
-            else if (model.nama_pembeli == null)
+            else if (modelPembeli.nama_pembeli == null)
             {
                 MessageBox.Show("nama pembeli can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
                 chk = false;
             }
-            else if (model.alamat == null)
+            else if (modelPembeli.alamat == null)
             {
                 MessageBox.Show("Alamat can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
                 chk = false;
             }
-            else if (model.telepon == null)
+            else if (modelPembeli.telepon == null)
             {
                 MessageBox.Show("Nomor telepon can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
                 chk = false;
@@ -84,10 +84,10 @@ namespace Klinik.ViewModels
 
             if (sqlresult.HasRows)
             {
-                collection.Clear();
+                dataPembeli.Clear();
                 while (sqlresult.Read())
                 {
-                    collection.Add(new Pembeli
+                    dataPembeli.Add(new Pembeli
                     {
                         id_pembeli = sqlresult[0].ToString(),
                         nama_pembeli = sqlresult[1].ToString(),
@@ -108,8 +108,8 @@ namespace Klinik.ViewModels
                     OpenConnection();
                     await Task.Delay(0);
                     var query = $"INSERT INTO Pembeli " +
-                        $"VALUES('{model.id_pembeli}','{model.nama_pembeli}','{model.alamat}','{model.telepon}')";
-                    //$"VALUES('{model.id_obat}','{model.nama_obat}','{model.khasiat}','{model.jumlah}','{model.harga_satuan}')";
+                        $"VALUES('{modelPembeli.id_pembeli}','{modelPembeli.nama_pembeli}','{modelPembeli.alamat}','{modelPembeli.telepon}')";
+                    //$"VALUES('{modelPembeli.id_obat}','{modelPembeli.nama_obat}','{modelPembeli.khasiat}','{modelPembeli.jumlah}','{modelPembeli.harga_satuan}')";
                     var sqlcmd = new SQLiteCommand(query, Connection);
 
                     var sqlresult = sqlcmd.ExecuteNonQuery();
@@ -134,11 +134,11 @@ namespace Klinik.ViewModels
                     OpenConnection();
                     await Task.Delay(0);
                     var query = $"UPDATE Obat SET " +
-                        $"nama_pembeli = '{model.nama_pembeli}', " +
-                        $"alamat = '{model.alamat}', " +
-                        $"Telepon = '{model.telepon}' " +
-                        $"WHERE id_pembeli = '{model.id_pembeli}'";
-                    //$"VALUES('{model.id_obat}','{model.nama_obat}','{model.khasiat}','{model.jumlah}','{model.harga_satuan}')";
+                        $"nama_pembeli = '{modelPembeli.nama_pembeli}', " +
+                        $"alamat = '{modelPembeli.alamat}', " +
+                        $"Telepon = '{modelPembeli.telepon}' " +
+                        $"WHERE id_pembeli = '{modelPembeli.id_pembeli}'";
+                    //$"VALUES('{modelPembeli.id_obat}','{modelPembeli.nama_obat}','{modelPembeli.khasiat}','{modelPembeli.jumlah}','{modelPembeli.harga_satuan}')";
                     var sqlcmd = new SQLiteCommand(query, Connection);
 
                     var sqlresult = sqlcmd.ExecuteNonQuery();
@@ -158,13 +158,13 @@ namespace Klinik.ViewModels
         {
             try
             {
-                if (MessageBox.Show($"yakin ingin menghapus '{model.id_pembeli}' ?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                if (MessageBox.Show($"yakin ingin menghapus '{modelPembeli.id_pembeli}' ?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     OpenConnection();
                     await Task.Delay(0);
                     var query = $"DELETE FROM Obat " +
-                        $"WHERE id_pembeli = '{model.id_pembeli}'";
-                    //$"VALUES('{model.id_obat}','{model.nama_obat}','{model.khasiat}','{model.jumlah}','{model.harga_satuan}')";
+                        $"WHERE id_pembeli = '{modelPembeli.id_pembeli}'";
+                    //$"VALUES('{modelPembeli.id_obat}','{modelPembeli.nama_obat}','{modelPembeli.khasiat}','{modelPembeli.jumlah}','{modelPembeli.harga_satuan}')";
                     var sqlcmd = new SQLiteCommand(query, Connection);
 
                     var sqlresult = sqlcmd.ExecuteNonQuery();
