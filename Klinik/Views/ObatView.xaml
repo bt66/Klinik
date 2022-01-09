@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="Klinik.Views.ObatView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:viewmodels="clr-namespace:Klinik.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:ObatViewModel}"
+             mc:Ignorable="d" 
+             d:DesignHeight="720" d:DesignWidth="1030"
+             Background="#0E1319">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="16.5"/>
+            <RowDefinition Height="79.5"/>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="50*"/>
+        </Grid.RowDefinitions>
+        <Label Content="Detail Obat" Style="{StaticResource labelJudul}" Margin="32,11,0,11" Grid.RowSpan="2"/>
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" Style="{StaticResource InputLabel}" Content="ID Obat"/>
+            <Label Grid.Row="1" Style="{StaticResource InputLabel}" Content="Nama Obat"/>
+            <Label Grid.Row="2" Style="{StaticResource InputLabel}" Content="Khasiat Obat"/>
+            <Label Grid.Row="3" Style="{StaticResource InputLabel}" Content="Jumlah"/>
+            <Label Grid.Row="4" Style="{StaticResource InputLabel}" Content="Harga Satuan"/>
+            <TextBox Grid.Row="0" Style="{StaticResource InputTextBox}" Text="{Binding ModelObat.id_obat, Mode=TwoWay}"/>
+            <TextBox Grid.Row="1" Style="{StaticResource InputTextBox}" Text="{Binding ModelObat.nama_obat, Mode=TwoWay}"/>
+            <TextBox Grid.Row="2" Style="{StaticResource InputTextBox}" Text="{Binding ModelObat.khasiat, Mode=TwoWay}"/>
+            <TextBox Grid.Row="3" Style="{StaticResource InputTextBox}" Text="{Binding ModelObat.jumlah, Mode=TwoWay}"/>
+            <TextBox Grid.Row="4" Style="{StaticResource InputTextBox}" Text="{Binding ModelObat.harga_satuan, Mode=TwoWay}"/>
+        </Grid>
+        <Grid Grid.Row="3">
+            <Button Content="INPUT" Command="{Binding InsertCommand}" Style="{StaticResource btnCRUD}" Margin="32,6,0,6"/>
+            <Button Content="UPDATE" Command="{Binding UpdateCommand}" Style="{StaticResource btnCRUD}" Margin="246,6,0,6"/>
+            <Button Content="DELETE" Command="{Binding DeleteCommand}" Style="{StaticResource btnCRUD}" Margin="460,6,0,6"/>
+        </Grid>
+        <DataGrid Grid.Row="4" HorizontalAlignment="Left" Height="292" Margin="32,10,0,0" VerticalAlignment="Top" Width="970" ItemsSource="{Binding DataObat}" SelectedItem="{Binding ModelObat}"/>
+
+    </Grid>
+</UserControl>

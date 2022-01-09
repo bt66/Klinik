@@ -1,0 +1,16 @@
+﻿using Klinik.ViewModels;
+using System.Windows.Controls;
+
+namespace Klinik.Views
+{
+    public partial class ObatView : UserControl
+    {
+        private ObatViewModel vm;
+        public ObatView()
+        {
+            InitializeComponent();
+            vm = new ObatViewModel();
+            DataContext = vm;
+        }
+    }
+}
