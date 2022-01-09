@@ -28,3 +28,5 @@ D:\fp pemrog\Klinik\Klinik\obj\Debug\Klinik.csproj.CoreCompileInputs.cache
 D:\fp pemrog\Klinik\Klinik\obj\Debug\Klinik.exe
 D:\fp pemrog\Klinik\Klinik\obj\Debug\Klinik.pdb
 D:\fp pemrog\Klinik\Klinik\obj\Debug\App.baml
+D:\fp pemrog\Klinik\Klinik\obj\Debug\Views\LoginDialog.g.cs
+D:\fp pemrog\Klinik\Klinik\obj\Debug\Views\LoginDialog.baml

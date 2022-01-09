@@ -4,6 +4,7 @@ using System.Windows;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Klinik.Models;
+using System;
 
 namespace Klinik.ViewModels
 {
@@ -18,8 +19,8 @@ namespace Klinik.ViewModels
             ReadCommand = new Command(async () => await ReadDataAsync());
         }
         public ICommand ReadCommand { get; set; }
-
-        public ObservableCollection<User> CollectionUser
+        public event Action OnCallBack;
+        public ObservableCollection<User> DataUser
         {
             get => dataUser;
             set
@@ -47,7 +48,7 @@ namespace Klinik.ViewModels
             }
             else if (modelUser.password == null)
             {
-                MessageBox.Show("nama obat can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Password can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
                 chk = false;
             }
             else
@@ -81,9 +82,12 @@ namespace Klinik.ViewModels
                             username = sqlresult[1].ToString(),
                             role = sqlresult[3].ToString(),
                         });
+                        App.SessionUser = sqlresult[1].ToString();
+                        App.SessionRole = sqlresult[3].ToString();
                     }
-                    //App.Dashboard = new Dashboard();
-                    //App.Dashboard.Show();
+                    App.View = new Views.Dashboard();
+                    App.View.Show();
+                    OnCallBack?.Invoke();
                 }
                 else
                 {

@@ -1,0 +1,28 @@
+﻿<Window x:Class="Klinik.Views.LoginDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="clr-namespace:Klinik.ViewModels"
+        d:DataContext="{d:DesignInstance Type=viewmodels:LoginViewModel}"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen" 
+        WindowStyle="SingleBorderWindow" 
+        Title="LoginDialog" Height="300" Width="300"
+        Background="#FE9900"
+        FontSize="16">
+    <Border Background="#13182B" CornerRadius="50">
+        <StackPanel Margin="20" >
+            <Label Content="Login" Foreground="White" FontSize="25" HorizontalAlignment="Center"/>
+            <Separator/>
+            <Label Content="Username" Foreground="White"/>
+            <TextBox x:Name="txtUser" Text="{Binding ModelUser.username}"/>
+            <Label Content="Password" Foreground="White"/>
+            <PasswordBox x:Name="txtPass" PasswordChanged="txtPass_PasswordChanged"/>
+            <Separator/>
+            <Button x:Name="Login" Content="Login" Command="{Binding ReadCommand}"/>
+
+
+        </StackPanel>
+    </Border>
+</Window>

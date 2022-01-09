@@ -157,7 +157,6 @@ namespace Klinik.ViewModels
         {
             try
             {
-
                 if (MessageBox.Show($"yakin ingin menghapus '{modelObat.id_obat}' ?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     {

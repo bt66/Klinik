@@ -31,8 +31,8 @@
                 <Image Grid.ColumnSpan="2" Source="pack://application:,,/Assets/profilePanel.png" Stretch="Fill" Margin="0,20"/>
                 <Image Grid.Column="0" Source="pack://application:,,/Assets/photoBorder.png" Stretch="Fill" Margin="10,30"/>
                 <Image Grid.Column="0" Source="pack://application:,,/Assets/defProfile.png" Stretch="Fill" Margin="30,50"/>
-                <Label x:Name="Username" Grid.Column="1" Content="Username" HorizontalAlignment="Left" Margin="0,44,0,0" VerticalAlignment="Top" Foreground="White" FontWeight="Bold" FontSize="20"/>
-                <Label x:Name="Role" Grid.Column="1" Content="Role User" HorizontalAlignment="Left" Margin="0,72,0,0" VerticalAlignment="Top" Foreground="White" FontSize="14" />
+                <Label x:Name="labelUsername" Grid.Column="1" Content="Username" HorizontalAlignment="Left" Margin="0,44,0,0" VerticalAlignment="Top" Foreground="White" FontWeight="Bold" FontSize="20"/>
+                <Label x:Name="labelRole" Grid.Column="1" Content="Role User" HorizontalAlignment="Left" Margin="0,72,0,0" VerticalAlignment="Top" Foreground="White" FontSize="14" />
             </Grid>
             <DockPanel Grid.Row="1">
                 <Button Content="Menu" DockPanel.Dock="Top"  Style="{StaticResource btnMenu}" x:Name="btnMenu" Click="btnMenu_Click"/>

@@ -7,11 +7,15 @@ namespace Klinik
     public partial class App : Application
     {
         public static Dashboard View { get; set; }
-
+        public static string SessionUser;
+        public static string SessionRole;
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            View = new Dashboard();
-            View.Show();
+            SessionUser = "";
+            SessionRole = "";
+            new LoginDialog().Show();
+            //View = new Dashboard();
+            //View.Show();
         }
 
         public static void ViewRouting(bool flag, Control content = null)
