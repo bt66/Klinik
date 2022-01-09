@@ -4,117 +4,89 @@ using System.Windows;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Klinik.Models;
+using System.Collections.Generic;
 
 namespace Klinik.ViewModels
 {
-    class PembeliViewModel : BaseViewModel
+    public class PembeliViewModel : BaseViewModel
     {
-        private ObservableCollection<Pembeli> dataPembeli;
-        private Pembeli modelPembeli;
-
         public PembeliViewModel()
         {
-            dataPembeli= new ObservableCollection<Pembeli>();
-            modelPembeli = new Pembeli();
-            InsertCommand = new Command(async () => await InsertDataAsync());
-            UpdateCommand = new Command(async () => await UpdateDataAsync());
-            DeleteCommand = new Command(async () => await DeleteDataAsync());
-            ReadCommand = new Command(async () => await ReadDataAsync());
+            collection = new ObservableCollection<Pembeli>();
+            model = new Pembeli();
+            CreateCommand = new Command(async () => await CreateAsync());
+            UpdateCommand = new Command(async () => await UpdateAsync());
+            DeleteCommand = new Command(async () => await DeleteAsync());
+            ReadCommand = new Command(async () => await ReadAsync());
             ReadCommand.Execute(null);
         }
+
+        public ICommand CreateCommand { get; set; }
         public ICommand ReadCommand { get; set; }
         public ICommand UpdateCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
-        public ICommand InsertCommand { get; set; }
-        public ObservableCollection<Pembeli> DataPembeli
+
+        public ObservableCollection<Pembeli> Collection
         {
-            get => dataPembeli;
+            get => collection;
             set
             {
-                SetProperty(ref dataPembeli, value);
-            }
-        }
-        public Pembeli ModelPembeli
-        {
-            get => modelPembeli;
-            set
-            {
-                SetProperty(ref modelPembeli, value);
+                SetProperty(ref collection, value);
             }
         }
 
-        private bool check()
+        public Pembeli Model
+        {
+            get => model;
+            set
+            {
+                SetProperty(ref model, value);
+            }
+        }
+
+        private ObservableCollection<Pembeli> collection;
+        private Pembeli model;
+
+        private async Task<bool> check()
         {
             var chk = false;
-            if (modelPembeli.id_pembeli == null)
+            if (model.id_pembeli == null)
             {
                 MessageBox.Show("ID pembeli can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
-                chk = false;
             }
-            else if (modelPembeli.nama_pembeli == null)
+            else if (model.nama_pembeli == null)
             {
                 MessageBox.Show("nama pembeli can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
-                chk = false;
             }
-            else if (modelPembeli.alamat == null)
+            else if (model.alamat == null)
             {
                 MessageBox.Show("Alamat can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
-                chk = false;
             }
-            else if (modelPembeli.telepon == null)
+            else if (model.telepon == null)
             {
                 MessageBox.Show("Nomor telepon can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
-                chk = false;
             }
             else
             {
                 chk = true;
             }
-            return chk;
+            return await Task.FromResult(chk);
         }
-
-        private async Task ReadDataAsync()
-        {
-            OpenConnection();
-            await Task.Delay(0);
-            var query = "SELECT * FROM [Pembeli]";
-            var sqlcmd = new SQLiteCommand(query, Connection);
-
-            var sqlresult = sqlcmd.ExecuteReader();
-
-            if (sqlresult.HasRows)
-            {
-                dataPembeli.Clear();
-                while (sqlresult.Read())
-                {
-                    dataPembeli.Add(new Pembeli
-                    {
-                        id_pembeli = sqlresult[0].ToString(),
-                        nama_pembeli = sqlresult[1].ToString(),
-                        alamat = sqlresult[2].ToString(),
-                        telepon = sqlresult[3].ToString(),
-                    });
-                }
-            }
-            CloseConnection();
-        }
-
-        private async Task InsertDataAsync()
+        private async Task<bool> CreateAsync()
         {
             try
             {
-                if (check())
+                if (await check())
                 {
-                    OpenConnection();
-                    await Task.Delay(0);
                     var query = $"INSERT INTO Pembeli " +
-                        $"VALUES('{modelPembeli.id_pembeli}','{modelPembeli.nama_pembeli}','{modelPembeli.alamat}','{modelPembeli.telepon}')";
-                    //$"VALUES('{modelPembeli.id_obat}','{modelPembeli.nama_obat}','{modelPembeli.khasiat}','{modelPembeli.jumlah}','{modelPembeli.harga_satuan}')";
-                    var sqlcmd = new SQLiteCommand(query, Connection);
+                                $"VALUES('{model.id_pembeli}','{model.nama_pembeli}','{model.alamat}','{model.telepon}')";
 
-                    var sqlresult = sqlcmd.ExecuteNonQuery();
+                    if (OpenConnection())
+                    {
+                        var command = new SQLiteCommand(query, Connection);
+                        command.ExecuteNonQuery();
+                    }
                     CloseConnection();
-                    await ReadDataAsync();
                     MessageBox.Show("Sucessfully Input", "Data Saved", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
@@ -123,28 +95,56 @@ namespace Klinik.ViewModels
             {
                 MessageBox.Show(msg.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            await ReadAsync();
+            return await Task.FromResult(true);
+        }
+        private async Task<IEnumerable<Pembeli>> ReadAsync()
+        {
+            var query = "SELECT * FROM [Pembeli]";
+            if (OpenConnection())
+            {
+                var command = new SQLiteCommand(query, Connection);
+                var result = command.ExecuteReader();
+
+                if (result.HasRows)
+                {
+                    collection.Clear();
+                    while (result.Read())
+                    {
+                        collection.Add(new Pembeli
+                        {
+                            id_pembeli = result[0].ToString(),
+                            nama_pembeli = result[1].ToString(),
+                            alamat = result[2].ToString(),
+                            telepon = result[3].ToString(),
+                        });
+                    }
+                }
+            }
+
+            CloseConnection();
+            return await Task.FromResult(collection);
         }
 
-        private async Task UpdateDataAsync()
+        private async Task<bool> UpdateAsync()
         {
             try
             {
-                if (check())
+                if (await check())
                 {
-                    OpenConnection();
-                    await Task.Delay(0);
                     var query = $"UPDATE Obat SET " +
-                        $"nama_pembeli = '{modelPembeli.nama_pembeli}', " +
-                        $"alamat = '{modelPembeli.alamat}', " +
-                        $"Telepon = '{modelPembeli.telepon}' " +
-                        $"WHERE id_pembeli = '{modelPembeli.id_pembeli}'";
-                    //$"VALUES('{modelPembeli.id_obat}','{modelPembeli.nama_obat}','{modelPembeli.khasiat}','{modelPembeli.jumlah}','{modelPembeli.harga_satuan}')";
-                    var sqlcmd = new SQLiteCommand(query, Connection);
-
-                    var sqlresult = sqlcmd.ExecuteNonQuery();
+                                $"nama_pembeli = '{model.nama_pembeli}', " +
+                                $"alamat = '{model.alamat}', " +
+                                $"Telepon = '{model.telepon}' " +
+                                $"WHERE id_pembeli = '{model.id_pembeli}'";
+                    if (OpenConnection())
+                    {
+                        var command = new SQLiteCommand(query, Connection);
+                        command.ExecuteNonQuery();
+                    }
                     CloseConnection();
-                    await ReadDataAsync();
                     MessageBox.Show("Sucessfully Update", "Data Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+                    await ReadAsync();
                 }
 
             }
@@ -152,25 +152,28 @@ namespace Klinik.ViewModels
             {
                 MessageBox.Show(msg.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            return await Task.FromResult(true);
         }
 
-        private async Task DeleteDataAsync()
+        private async Task<bool> DeleteAsync()
         {
             try
             {
-                if (MessageBox.Show($"yakin ingin menghapus '{modelPembeli.id_pembeli}' ?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                if (MessageBox.Show($"yakin ingin menghapus '{model.id_pembeli}' ?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
-                    OpenConnection();
-                    await Task.Delay(0);
-                    var query = $"DELETE FROM Obat " +
-                        $"WHERE id_pembeli = '{modelPembeli.id_pembeli}'";
-                    //$"VALUES('{modelPembeli.id_obat}','{modelPembeli.nama_obat}','{modelPembeli.khasiat}','{modelPembeli.jumlah}','{modelPembeli.harga_satuan}')";
-                    var sqlcmd = new SQLiteCommand(query, Connection);
+                    {
 
-                    var sqlresult = sqlcmd.ExecuteNonQuery();
-                    CloseConnection();
-                    await ReadDataAsync();
-                    MessageBox.Show("Sucessfully Deleted", "Delete", MessageBoxButton.OK, MessageBoxImage.Information);
+                        if (OpenConnection())
+                        {
+                            var query = $"DELETE FROM Pembeli " +
+                                        $"WHERE id_pembeli = '{model.id_pembeli}'";
+                            var command = new SQLiteCommand(query, Connection);
+                            command.ExecuteNonQuery();
+                        }
+                        CloseConnection();
+                        MessageBox.Show("Sucessfully Deleted", "Delete", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await ReadAsync();
+                    }
                 }
                 else
                 {
@@ -181,6 +184,7 @@ namespace Klinik.ViewModels
             {
                 MessageBox.Show(msg.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            return await Task.FromResult(true);
         }
     }
 }

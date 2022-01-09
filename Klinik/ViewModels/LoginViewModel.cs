@@ -10,46 +10,44 @@ namespace Klinik.ViewModels
 {
     class LoginViewModel : BaseViewModel
     {
-        private ObservableCollection<User> dataUser;
-        private User modelUser;
+        private ObservableCollection<User> collection;
+        private User model;
         public LoginViewModel()
         {
-            dataUser = new ObservableCollection<User>();
-            modelUser = new User();
-            ReadCommand = new Command(async () => await ReadDataAsync());
+            collection = new ObservableCollection<User>();
+            model = new User();
+            ReadCommand = new Command(async () => await ReadAsync());
         }
         public ICommand ReadCommand { get; set; }
         public event Action OnCallBack;
-        public ObservableCollection<User> DataUser
+        public ObservableCollection<User> Collection
         {
-            get => dataUser;
+            get => collection;
             set
             {
-                SetProperty(ref dataUser, value);
+                SetProperty(ref collection, value);
             }
         }
 
-        public User ModelUser
+        public User Model
         {
-            get => modelUser;
+            get => model;
             set
             {
-                SetProperty(ref modelUser, value);
+                SetProperty(ref model, value);
             }
         }
 
         private bool check()
         {
             var chk = false;
-            if (modelUser.username == null)
+            if (model.username == null)
             {
                 MessageBox.Show("ID can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
-                chk = false;
             }
-            else if (modelUser.password == null)
+            else if (model.password == null)
             {
                 MessageBox.Show("Password can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
-                chk = false;
             }
             else
             {
@@ -58,32 +56,32 @@ namespace Klinik.ViewModels
             return chk;
         }
 
-        private async Task ReadDataAsync()
+        private async Task ReadAsync()
         {
             if (check())
             {
                 OpenConnection();
                 await Task.Delay(0);
                 var query = $"SELECT * FROM User " +
-                    $"WHERE username='{modelUser.username}' " +
-                    $"AND password='{modelUser.password}'";
-                var sqlcmd = new SQLiteCommand(query, Connection);
+                    $"WHERE username='{model.username}' " +
+                    $"AND password='{model.password}'";
+                var command = new SQLiteCommand(query, Connection);
 
-                var sqlresult = sqlcmd.ExecuteReader();
+                var result = command.ExecuteReader();
 
-                if (sqlresult.HasRows)
+                if (result.HasRows)
                 {
-                    dataUser.Clear();
-                    while (sqlresult.Read())
+                    collection.Clear();
+                    while (result.Read())
                     {
-                        dataUser.Add(new User
+                        collection.Add(new User
                         {
-                            id_user = sqlresult[0].ToString(),
-                            username = sqlresult[1].ToString(),
-                            role = sqlresult[3].ToString(),
+                            id_user = result[0].ToString(),
+                            username = result[1].ToString(),
+                            role = result[3].ToString(),
                         });
-                        App.SessionUser = sqlresult[1].ToString();
-                        App.SessionRole = sqlresult[3].ToString();
+                        App.SessionUser = result[1].ToString();
+                        App.SessionRole = result[3].ToString();
                     }
                     App.View = new Views.Dashboard();
                     App.View.Show();

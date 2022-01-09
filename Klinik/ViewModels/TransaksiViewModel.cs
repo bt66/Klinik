@@ -4,212 +4,217 @@ using System.Windows;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Klinik.Models;
+using System.Collections.Generic;
 
 namespace Klinik.ViewModels
 {
-    class TransaksiViewModel : BaseViewModel
+    public class TransaksiViewModel : BaseViewModel
     {
-        private ObservableCollection<Transaksi> dataTransaksi;
-        private Transaksi modelTransaksi;
-
         public TransaksiViewModel()
         {
-            dataTransaksi = new ObservableCollection<Transaksi>();
-            modelTransaksi = new Transaksi();
-            InsertCommand = new Command(async () => await InsertDataAsync());
-            UpdateCommand = new Command(async () => await UpdateDataAsync());
-            DeleteCommand = new Command(async () => await DeleteDataAsync());
-            ReadCommand = new Command(async () => await ReadDataAsync());
+            collection = new ObservableCollection<Transaksi>();
+            model = new Transaksi();
+            CreateCommand = new Command(async () => await CreateAsync());
+            UpdateCommand = new Command(async () => await UpdateAsync());
+            DeleteCommand = new Command(async () => await DeleteAsync());
+            ReadCommand = new Command(async () => await ReadAsync());
             ReadCommand.Execute(null);
         }
+
+        public ICommand CreateCommand { get; set; }
         public ICommand ReadCommand { get; set; }
-        public ICommand InsertCommand { get; set; }
         public ICommand UpdateCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
 
-        public ObservableCollection<Transaksi> DataTransaksi
+        public ObservableCollection<Transaksi> Collection
         {
-            get => dataTransaksi;
+            get => collection;
             set
             {
-                SetProperty(ref dataTransaksi, value);
+                SetProperty(ref collection, value);
             }
         }
 
-        public Transaksi ModelTransaksi
+        public Transaksi Model
         {
-            get => modelTransaksi;
+            get => model;
             set
             {
-                SetProperty(ref modelTransaksi, value);
+                SetProperty(ref model, value);
             }
         }
-        private bool check()
+
+        private ObservableCollection<Transaksi> collection;
+        private Transaksi model;
+
+        private async Task<bool> check()
         {
             var chk = false;
-            if (modelTransaksi.id_transaksi == null)
+            if (model.id_transaksi == null)
             {
                 MessageBox.Show("ID transaksi can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
-                chk = false;
             }
-            else if (modelTransaksi.id_pembeli == null)
+            else if (model.id_pembeli == null)
             {
                 MessageBox.Show("id pembeli can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
-                chk = false;
             }
-            else if (modelTransaksi.id_obat == null)
+            else if (model.id_obat == null)
             {
                 MessageBox.Show("id obat can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
-                chk = false;
             }
-            else if (modelTransaksi.jumlah == null)
+            else if (model.jumlah == null)
             {
                 MessageBox.Show("jumlah barang can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
-                chk = false;
             }
             else
             {
                 chk = true;
             }
-            return chk;
-        }
-
-        private async Task ReadDataAsync()
-        {
-            OpenConnection();
-            await Task.Delay(0);
-            var query = "SELECT * FROM Transaksi";
-            var sqlcmd = new SQLiteCommand(query, Connection);
-
-            var sqlresult = sqlcmd.ExecuteReader();
-
-            if (sqlresult.HasRows)
-            {
-                dataTransaksi.Clear();
-                while (sqlresult.Read())
-                {
-                    dataTransaksi.Add(new Transaksi
-                    {
-                        id_transaksi = sqlresult[0].ToString(),
-                        id_pembeli = sqlresult[1].ToString(),
-                        id_obat = sqlresult[2].ToString(),
-                        jumlah = sqlresult[3].ToString(),
-                        total_harga = sqlresult[3].ToString()
-                    });
-                }
-            }
-            CloseConnection();
+            return await Task.FromResult(chk);
         }
 
         private string hargasatuanObat;
         private string jumlahStockObat;
         private int total;
 
-        private async Task InsertDataAsync()
+        private async Task<bool> CreateAsync()
         {
             try
             {
-                if (true)
+                if (await check())
                 {
-                    OpenConnection();
-                    await Task.Delay(0);
-                    var query1 = $"SELECT harga_satuan,jumlah FROM Obat WHERE id_obat='{modelTransaksi.id_obat}'";
-                    var sqlcmd1 = new SQLiteCommand(query1, Connection);
-                    var sqlresult1 = sqlcmd1.ExecuteReader();
+                    var query = $"SELECT harga_satuan,jumlah FROM Obat WHERE id_obat='{model.id_obat}'";
 
-                    if (sqlresult1.HasRows)
+                    if (OpenConnection())
                     {
-                        dataTransaksi.Clear();
-                        while (sqlresult1.Read())
+                        var command = new SQLiteCommand(query, Connection);
+                        var result = command.ExecuteReader();
+
+                        if (result.HasRows)
                         {
-                            hargasatuanObat = sqlresult1[0].ToString();
-                            jumlahStockObat = sqlresult1[1].ToString();
+                            collection.Clear();
+                            while (result.Read())
+                            {
+                                hargasatuanObat = result[0].ToString();
+                                jumlahStockObat = result[1].ToString();
+                            }
                         }
+                        if (int.Parse(jumlahStockObat) <= 0)
+                        {
+                            MessageBox.Show("Stok Obat Habis", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            CloseConnection();
+                            await ReadAsync();
+                            return await Task.FromResult(true);
+                        }
+                        total = int.Parse(hargasatuanObat) * int.Parse(model.jumlah);
+
+                        await Task.Delay(0);
+
+                        query = $"INSERT INTO Transaksi " +
+                                $"VALUES('{model.id_transaksi}','{model.id_pembeli}','{model.id_obat}','{model.jumlah}','{total}')";
+                        command = new SQLiteCommand(query, Connection);
+                        command.ExecuteNonQuery();
+
+                        // kurangi stock
+                        total = int.Parse(jumlahStockObat) - int.Parse(model.jumlah);
+
+                        await Task.Delay(0);
+                        query = $"UPDATE Obat SET " +
+                                $"jumlah='{total}' " +
+                                $"WHERE id_obat = '{model.id_obat}'";
+                        command = new SQLiteCommand(query, Connection);
+                        command.ExecuteNonQuery();
                     }
                     CloseConnection();
-                    MessageBox.Show(hargasatuanObat, "Data Saved", MessageBoxButton.OK, MessageBoxImage.Information);
-                    MessageBox.Show(jumlahStockObat, "Data Saved", MessageBoxButton.OK, MessageBoxImage.Information);
-                    total = int.Parse(hargasatuanObat) * int.Parse(modelTransaksi.jumlah);
-                    //MessageBox.Show(total, "Data Saved", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    OpenConnection();
-                    await Task.Delay(0);
-                    var query = $"INSERT INTO Transaksi " +
-                        $"VALUES('{modelTransaksi.id_transaksi}','{modelTransaksi.id_pembeli}','{modelTransaksi.id_obat}','{modelTransaksi.jumlah}','{total}')";
-                    //$"VALUES('T0004','P0002','B0003','{modelTransaksi.jumlah}','{total}')";
-                    var sqlcmd = new SQLiteCommand(query, Connection);
-
-                    var sqlresult = sqlcmd.ExecuteNonQuery();
-                    CloseConnection();
-
-
-                    // kurangi stock
-                    total = int.Parse(jumlahStockObat) - int.Parse(modelTransaksi.jumlah);
-
-                    OpenConnection();
-                    await Task.Delay(0);
-                    query = $"UPDATE Obat SET " +
-                        $"jumlah='{total}' " +
-                        $"WHERE id_obat = '{modelTransaksi.id_obat}'";
-                    sqlcmd = new SQLiteCommand(query, Connection);
-                    sqlresult = sqlcmd.ExecuteNonQuery();
-
-                    CloseConnection();
-
                     MessageBox.Show("Sucessfully Input", "Data Saved", MessageBoxButton.OK, MessageBoxImage.Information);
-                    await ReadDataAsync();
+                    await ReadAsync();
+                }
 
+            }
+            catch (SQLiteException msg)
+            {
+                MessageBox.Show(msg.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            return await Task.FromResult(true);
+        }
+        private async Task<IEnumerable<Transaksi>> ReadAsync()
+        {
+            var query = "SELECT * FROM [Transaksi]";
+            if (OpenConnection())
+            {
+                var command = new SQLiteCommand(query, Connection);
+                var result = command.ExecuteReader();
+
+                if (result.HasRows)
+                {
+                    collection.Clear();
+                    while (result.Read())
+                    {
+                        collection.Add(new Transaksi
+                        {
+                            id_transaksi = result[0].ToString(),
+                            id_pembeli = result[1].ToString(),
+                            id_obat = result[2].ToString(),
+                            jumlah = result[3].ToString(),
+                            total_harga = result[4].ToString()
+                        });
+                    }
                 }
             }
-            catch (SQLiteException msg)
-            {
-                MessageBox.Show(msg.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+
+            CloseConnection();
+            return await Task.FromResult(collection);
         }
 
-
-        private async Task UpdateDataAsync()
+        private async Task<bool> UpdateAsync()
         {
             try
             {
-                OpenConnection();
-                await Task.Delay(0);
-                var query = $"UPDATE Transaksi SET " +
-                    $"id_pembeli = '{modelTransaksi.id_pembeli}', " +
-                    $"id_obat = '{modelTransaksi.id_obat}', " +
-                    $"jumlah = '{modelTransaksi.jumlah}', " +
-                    $"total_harga = '{total}' " +
-                    $"WHERE id_transaksi = '{modelTransaksi.id_transaksi}'";
-                //$"VALUES('{modelTransaksi.id_obat}','{modelTransaksi.nama_obat}','{modelTransaksi.khasiat}','{modelTransaksi.jumlah}','{modelTransaksi.harga_satuan}')";
-                var sqlcmd = new SQLiteCommand(query, Connection);
-
-                var sqlresult = sqlcmd.ExecuteNonQuery();
-                CloseConnection();
-                await ReadDataAsync();
-                MessageBox.Show("Sucessfully Update", "Data Saved", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (SQLiteException msg)
-            {
-                MessageBox.Show(msg.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private async Task DeleteDataAsync()
-        {
-            try
-            {
-                if (MessageBox.Show($"yakin ingin menghapus '{modelTransaksi.id_transaksi}' ?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                if (await check())
                 {
-                    OpenConnection();
-                    await Task.Delay(0);
-                    var query = $"DELETE FROM Transaksi " +
-                        $"WHERE id_transaksi = '{modelTransaksi.id_transaksi}'";
-                    var sqlcmd = new SQLiteCommand(query, Connection);
-
-                    var sqlresult = sqlcmd.ExecuteNonQuery();
+                    var query = $"UPDATE Transaksi SET " +
+                                $"id_pembeli = '{model.id_pembeli}', " +
+                                $"id_obat = '{model.id_obat}', " +
+                                $"jumlah = '{model.jumlah}', " +
+                                $"total_harga = '{total}' " +
+                                $"WHERE id_transaksi = '{model.id_transaksi}'";
+                    if (OpenConnection())
+                    {
+                        var command = new SQLiteCommand(query, Connection);
+                        command.ExecuteNonQuery();
+                    }
                     CloseConnection();
-                    await ReadDataAsync();
-                    MessageBox.Show("Sucessfully Deleted", "Delete", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Sucessfully Update", "Data Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+                    await ReadAsync();
+                }
+
+            }
+            catch (SQLiteException msg)
+            {
+                MessageBox.Show(msg.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            return await Task.FromResult(true);
+        }
+
+        private async Task<bool> DeleteAsync()
+        {
+            try
+            {
+                if (MessageBox.Show($"yakin ingin menghapus '{model.id_pembeli}' ?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                {
+                    {
+
+                        if (OpenConnection())
+                        {
+                            var query = $"DELETE FROM Transaksi " +
+                                        $"WHERE id_pembeli = '{model.id_pembeli}'";
+                            var command = new SQLiteCommand(query, Connection);
+                            command.ExecuteNonQuery();
+                        }
+                        CloseConnection();
+                        MessageBox.Show("Sucessfully Deleted", "Delete", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await ReadAsync();
+                    }
                 }
                 else
                 {
@@ -220,6 +225,7 @@ namespace Klinik.ViewModels
             {
                 MessageBox.Show(msg.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            return await Task.FromResult(true);
         }
     }
 }

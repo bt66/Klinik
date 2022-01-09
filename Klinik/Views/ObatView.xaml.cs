@@ -12,5 +12,11 @@ namespace Klinik.Views
             vm = new ObatViewModel();
             DataContext = vm;
         }
+
+        private void DataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+        {
+
+        }
+
     }
 }

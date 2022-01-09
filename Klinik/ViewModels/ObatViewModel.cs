@@ -4,145 +4,145 @@ using System.Windows;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Klinik.Models;
+using System.Collections.Generic;
 
 namespace Klinik.ViewModels
 {
     public class ObatViewModel : BaseViewModel
     {
-        private ObservableCollection<Obat> dataObat;
-        private Obat modelObat;
         public ObatViewModel()
         {
-            dataObat = new ObservableCollection<Obat>();
-            modelObat = new Obat();
-            InsertCommand = new Command(async () => await InsertDataAsync());
-            UpdateCommand = new Command(async () => await UpdateDataAsync());
-            DeleteCommand = new Command(async () => await DeleteDataAsync());
-            ReadCommand = new Command(async () => await ReadDataAsync());
+            collection = new ObservableCollection<Obat>();
+            model = new Obat();
+            CreateCommand = new Command(async () => await CreateAsync());
+            UpdateCommand = new Command(async () => await UpdateAsync());
+            DeleteCommand = new Command(async () => await DeleteAsync());
+            ReadCommand = new Command(async () => await ReadAsync());
             ReadCommand.Execute(null);
         }
 
-        public ICommand InsertCommand { get; set; }
+        public ICommand CreateCommand { get; set; }
+        public ICommand ReadCommand { get; set; }
         public ICommand UpdateCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
-        public ICommand ReadCommand { get; set; }
 
-        public ObservableCollection<Obat> DataObat
+        public ObservableCollection<Obat> Collection
         {
-            get => dataObat;
+            get => collection;
             set
             {
-                SetProperty(ref dataObat, value);
+                SetProperty(ref collection, value);
             }
         }
 
-        public Obat ModelObat
+        public Obat Model
         {
-            get => modelObat;
+            get => model;
             set
             {
-                SetProperty(ref modelObat, value);
+                SetProperty(ref model, value);
             }
         }
 
-        private async Task ReadDataAsync()
-        {
-            OpenConnection();
-            await Task.Delay(0);
-            var query = "SELECT * FROM [Obat]";
-            var sqlcmd = new SQLiteCommand(query, Connection);
-
-            var sqlresult = sqlcmd.ExecuteReader();
-
-            if (sqlresult.HasRows)
-            {
-                dataObat.Clear();
-                while (sqlresult.Read())
-                {
-                    dataObat.Add(new Obat
-                    {
-                        id_obat = sqlresult[0].ToString(),
-                        nama_obat = sqlresult[1].ToString(),
-                        khasiat = sqlresult[2].ToString(),
-                        jumlah = sqlresult[3].ToString(),
-                        harga_satuan = sqlresult[4].ToString(),
-                    });
-                }
-            }
-            CloseConnection();
-        }
-        private bool check()
+        private ObservableCollection<Obat> collection;
+        private Obat model;
+        
+        private async Task<bool> check()
         {
             var chk = false;
-            if (modelObat.id_obat == null)
+            if (model.id_obat == null)
             {
                 MessageBox.Show("ID can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
-                chk = false;
             }
-            else if (modelObat.nama_obat == null)
+            else if (model.nama_obat == null)
             {
                 MessageBox.Show("nama obat can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
-                chk = false;
             }
-            else if (modelObat.harga_satuan == null)
+            else if (model.harga_satuan == null)
             {
                 MessageBox.Show("harga satuan can't null !", "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
-                chk = false;
             }
             else
             {
                 chk = true;
             }
-            return chk;
+            return await Task.FromResult(chk);
         }
-
-        private async Task InsertDataAsync()
+        private async Task<bool> CreateAsync()
         {
             try
             {
-                if (check())
-                {
-                    OpenConnection();
-                    await Task.Delay(0);
-                    var query = $"INSERT INTO Obat " +
-                        $"VALUES('{modelObat.id_obat}','{modelObat.nama_obat}','{modelObat.khasiat}','{modelObat.jumlah}','{modelObat.harga_satuan}')";
-                    //$"VALUES('{modelObat.id_obat}','{modelObat.nama_obat}','{modelObat.khasiat}','{modelObat.jumlah}','{modelObat.harga_satuan}')";
-                    var sqlcmd = new SQLiteCommand(query, Connection);
+            if (await check())
+            {
+                var query = $"INSERT INTO Obat " +
+                            $"VALUES('{model.id_obat}','{model.nama_obat}','{model.khasiat}','{model.jumlah}','{model.harga_satuan}')";
 
-                    var sqlresult = sqlcmd.ExecuteNonQuery();
-                    CloseConnection();
-                    await ReadDataAsync();
-                    MessageBox.Show("Sucessfully Input", "Data Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (OpenConnection())
+                {
+                    var command = new SQLiteCommand(query, Connection);
+                    command.ExecuteNonQuery();
                 }
+                CloseConnection();
+                MessageBox.Show("Sucessfully Input", "Data Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
 
             }
             catch (SQLiteException msg)
             {
                 MessageBox.Show(msg.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
+            await ReadAsync();
+            return await Task.FromResult(true);
         }
-        private async Task UpdateDataAsync()
+        private async Task<IEnumerable<Obat>> ReadAsync()
+        {
+            var query = "SELECT * FROM [Obat]";
+            if (OpenConnection())
+            {
+                var command = new SQLiteCommand(query, Connection);
+                var result = command.ExecuteReader();
+
+                if (result.HasRows)
+                {
+                    collection.Clear();
+                    while (result.Read())
+                    {
+                        collection.Add(new Obat
+                        {
+                            id_obat = result[0].ToString(),
+                            nama_obat = result[1].ToString(),
+                            khasiat = result[2].ToString(),
+                            jumlah = result[3].ToString(),
+                            harga_satuan = result[4].ToString(),
+                        });
+                    }
+                }
+            }
+
+            CloseConnection();
+            return await Task.FromResult(collection);
+        }
+
+        private async Task UpdateAsync()
         {
             try
             {
-                if (check())
+                if (await check())
                 {
-                    OpenConnection();
-                    await Task.Delay(0);
                     var query = $"UPDATE Obat SET " +
-                        $"nama_obat = '{modelObat.nama_obat}', " +
-                        $"khasiat = '{modelObat.khasiat}', " +
-                        $"jumlah = '{modelObat.jumlah}', " +
-                        $"harga_satuan = '{modelObat.harga_satuan}' " +
-                        $"WHERE id_obat = '{modelObat.id_obat}'";
-                    //$"VALUES('{modelObat.id_obat}','{modelObat.nama_obat}','{modelObat.khasiat}','{modelObat.jumlah}','{modelObat.harga_satuan}')";
-                    var sqlcmd = new SQLiteCommand(query, Connection);
-
-                    var sqlresult = sqlcmd.ExecuteNonQuery();
+                                $"nama_obat = '{model.nama_obat}', " +
+                                $"khasiat = '{model.khasiat}', " +
+                                $"jumlah = '{model.jumlah}', " +
+                                $"harga_satuan = '{model.harga_satuan}' " +
+                                $"WHERE id_obat = '{model.id_obat}'";
+                    if (OpenConnection())
+                    {
+                        var command = new SQLiteCommand(query, Connection);
+                        command.ExecuteNonQuery();
+                    }
                     CloseConnection();
-                    await ReadDataAsync();
                     MessageBox.Show("Sucessfully Update", "Data Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+                    await ReadAsync();
                 }
 
             }
@@ -150,27 +150,27 @@ namespace Klinik.ViewModels
             {
                 MessageBox.Show(msg.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
+            //return await Task.FromResult(true);
         }
 
-        private async Task DeleteDataAsync()
+        private async Task DeleteAsync()
         {
             try
             {
-                if (MessageBox.Show($"yakin ingin menghapus '{modelObat.id_obat}' ?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                if (MessageBox.Show($"yakin ingin menghapus '{model.id_obat}' ?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
                     {
-                        OpenConnection();
-                        await Task.Delay(0);
-                        var query = $"DELETE FROM Obat " +
-                            $"WHERE id_obat = '{modelObat.id_obat}'";
-                        //$"VALUES('{modelObat.id_obat}','{modelObat.nama_obat}','{modelObat.khasiat}','{modelObat.jumlah}','{modelObat.harga_satuan}')";
-                        var sqlcmd = new SQLiteCommand(query, Connection);
-
-                        var sqlresult = sqlcmd.ExecuteNonQuery();
+                        
+                        if (OpenConnection())
+                        {
+                            var query = $"DELETE FROM Obat " +
+                                        $"WHERE id_obat = '{model.id_obat}'";
+                            var command = new SQLiteCommand(query, Connection);
+                            command.ExecuteNonQuery();
+                        }
                         CloseConnection();
-                        await ReadDataAsync();
                         MessageBox.Show("Sucessfully Deleted", "Delete", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await ReadAsync();
                     }
                 }
                 else
@@ -182,7 +182,7 @@ namespace Klinik.ViewModels
             {
                 MessageBox.Show(msg.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
+            //return await Task.FromResult(true);
         }
     }
 }

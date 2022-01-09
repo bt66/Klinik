@@ -17,7 +17,7 @@ namespace Klinik.Views
 
         private void txtPass_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            vm.ModelUser.password = txtPass.Password;
+            vm.Model.password = txtPass.Password;
         }
     }
 }
