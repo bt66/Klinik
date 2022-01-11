@@ -49,6 +49,7 @@ namespace Klinik.ViewModels
         
         private async Task<bool> check()
         {
+            await Task.Delay(0);
             var chk = false;
             if (model.id_obat == null)
             {
@@ -123,7 +124,7 @@ namespace Klinik.ViewModels
             return await Task.FromResult(collection);
         }
 
-        private async Task UpdateAsync()
+        private async Task<bool> UpdateAsync()
         {
             try
             {
@@ -150,10 +151,10 @@ namespace Klinik.ViewModels
             {
                 MessageBox.Show(msg.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            //return await Task.FromResult(true);
+            return await Task.FromResult(true);
         }
 
-        private async Task DeleteAsync()
+        private async Task<bool> DeleteAsync()
         {
             try
             {
@@ -182,7 +183,7 @@ namespace Klinik.ViewModels
             {
                 MessageBox.Show(msg.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            //return await Task.FromResult(true);
+            return await Task.FromResult(true);
         }
     }
 }

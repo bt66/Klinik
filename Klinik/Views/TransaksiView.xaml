@@ -41,7 +41,19 @@
             <Button Content="UPDATE" Command="{Binding UpdateCommand}" Style="{StaticResource btnCRUD}" Margin="246,6,0,0"/>
             <Button Content="DELETE" Command="{Binding DeleteCommand}" Style="{StaticResource btnCRUD}" Margin="460,6,0,0" Grid.ColumnSpan="2"/>
         </Grid>
-        <DataGrid Grid.Row="4" HorizontalAlignment="Left" Height="292" Margin="32,10,0,0" VerticalAlignment="Top" Width="970" ItemsSource="{Binding Collection}" SelectedItem="{Binding Model}"/>
+        <!--<DataGrid Grid.Row="4" HorizontalAlignment="Left" Height="292" Margin="32,10,0,0" VerticalAlignment="Top" Width="970" ItemsSource="{Binding Collection}" SelectedItem="{Binding Model}"/>-->
+        <DataGrid Grid.Row="4" Margin="32,32,32,32" 
+                  HeadersVisibility="Column" EnableRowVirtualization="False"
+                  CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
+                  ItemsSource="{Binding Collection}" SelectedItem="{Binding Model}" Background="#FF13182B" Foreground="Black" BorderBrush="{x:Null}" RowHeight="25">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID TRANSAKSI" Binding="{Binding id_transaksi}" Width="20*"/>
+                <DataGridTextColumn Header="ID PEMBELI" Binding="{Binding id_pembeli}" Width="20*"/>
+                <DataGridTextColumn Header="ID OBAT" Binding="{Binding id_obat}" Width="20*"/>
+                <DataGridTextColumn Header="JUMLAH BARANG" Binding="{Binding jumlah}" Width="20*"/>
+                <DataGridTextColumn Header="TOTAL HARGA" Binding="{Binding total_harga}" Width="20*"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
     </Grid>
 </UserControl>

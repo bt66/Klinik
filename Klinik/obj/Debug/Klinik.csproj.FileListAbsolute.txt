@@ -30,3 +30,5 @@ D:\fp pemrog\Klinik\Klinik\obj\Debug\Klinik.pdb
 D:\fp pemrog\Klinik\Klinik\obj\Debug\App.baml
 D:\fp pemrog\Klinik\Klinik\obj\Debug\Views\LoginDialog.g.cs
 D:\fp pemrog\Klinik\Klinik\obj\Debug\Views\LoginDialog.baml
+D:\fp pemrog\Klinik\Klinik\obj\Debug\Resources\DataGridStyle.baml
+D:\fp pemrog\Klinik\Klinik\obj\Debug\Resources\GlobalStyle.baml

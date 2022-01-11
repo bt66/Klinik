@@ -49,6 +49,7 @@ namespace Klinik.ViewModels
 
         private async Task<bool> check()
         {
+            await Task.Delay(0);
             var chk = false;
             if (model.id_pembeli == null)
             {

@@ -45,14 +45,13 @@
         <DataGrid Grid.Row="4" Margin="32,32,32,32" 
                   HeadersVisibility="Column" EnableRowVirtualization="False"
                   CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"
-                  SelectedCellsChanged="DataGrid_SelectedCellsChanged" 
-                  ItemsSource="{Binding Collection}" SelectedItem="{Binding Model}" Background="#FF13182B" Foreground="Black" BorderBrush="{x:Null}">
+                  ItemsSource="{Binding Collection}" SelectedItem="{Binding Model}" Background="#FF13182B" Foreground="Black" BorderBrush="{x:Null}" RowHeight="25">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID OBAT" Binding="{Binding id_obat}" Width="auto"/>
-                <DataGridTextColumn Header="NAMA OBAT" Binding="{Binding nama_obat}" Width="auto"/>
-                <DataGridTextColumn Header="KHASIAT" Binding="{Binding khasiat}" Width="auto"/>
-                <DataGridTextColumn Header="STOK OBAT" Binding="{Binding jumlah}" Width="auto"/>
-                <DataGridTextColumn Header="HARGA SATUAN" Binding="{Binding harga_satuan}" Width="auto"/>
+                <DataGridTextColumn Header="ID OBAT" Binding="{Binding id_obat}" Width="20*"/>
+                <DataGridTextColumn Header="NAMA OBAT" Binding="{Binding nama_obat}" Width="20*"/>
+                <DataGridTextColumn Header="KHASIAT" Binding="{Binding khasiat}" Width="20*"/>
+                <DataGridTextColumn Header="STOK OBAT" Binding="{Binding jumlah}" Width="20*"/>
+                <DataGridTextColumn Header="HARGA SATUAN" Binding="{Binding harga_satuan}" Width="20*"/>
             </DataGrid.Columns>
         </DataGrid>
                   

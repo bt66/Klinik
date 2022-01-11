@@ -13,9 +13,9 @@ namespace Klinik
         {
             SessionUser = "";
             SessionRole = "";
-            //new LoginDialog().Show();
-            View = new Dashboard();
-            View.Show();
+            new LoginDialog().Show();
+            //View = new Dashboard();
+            //View.Show();
         }
 
         public static void ViewRouting(bool flag, Control content = null)

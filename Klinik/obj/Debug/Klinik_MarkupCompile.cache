@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 D:\fp pemrog\Klinik\Klinik\App.xaml
-51093626590
+7-870364273
 
 181020414715
 19-1929060832
-Views\Dashboard.xaml;Views\LoginDialog.xaml;Views\ObatView.xaml;Views\PembeliView.xaml;Views\TransaksiView.xaml;
+Resources\DataGridStyle.xaml;Resources\GlobalStyle.xaml;Views\Dashboard.xaml;Views\LoginDialog.xaml;Views\ObatView.xaml;Views\PembeliView.xaml;Views\TransaksiView.xaml;
 
 False
 
