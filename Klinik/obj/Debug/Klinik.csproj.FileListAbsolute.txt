@@ -32,3 +32,38 @@ D:\fp pemrog\Klinik\Klinik\obj\Debug\Views\LoginDialog.g.cs
 D:\fp pemrog\Klinik\Klinik\obj\Debug\Views\LoginDialog.baml
 D:\fp pemrog\Klinik\Klinik\obj\Debug\Resources\DataGridStyle.baml
 D:\fp pemrog\Klinik\Klinik\obj\Debug\Resources\GlobalStyle.baml
+F:\belajar_coding\c#\Klinik\Klinik\bin\Debug\Klinik.exe.config
+F:\belajar_coding\c#\Klinik\Klinik\bin\Debug\Klinik.exe
+F:\belajar_coding\c#\Klinik\Klinik\bin\Debug\Klinik.pdb
+F:\belajar_coding\c#\Klinik\Klinik\bin\Debug\EntityFramework.dll
+F:\belajar_coding\c#\Klinik\Klinik\bin\Debug\EntityFramework.SqlServer.dll
+F:\belajar_coding\c#\Klinik\Klinik\bin\Debug\System.Data.SQLite.dll
+F:\belajar_coding\c#\Klinik\Klinik\bin\Debug\System.Data.SQLite.EF6.dll
+F:\belajar_coding\c#\Klinik\Klinik\bin\Debug\System.Data.SQLite.Linq.dll
+F:\belajar_coding\c#\Klinik\Klinik\bin\Debug\EntityFramework.xml
+F:\belajar_coding\c#\Klinik\Klinik\bin\Debug\EntityFramework.SqlServer.xml
+F:\belajar_coding\c#\Klinik\Klinik\bin\Debug\System.Data.SQLite.xml
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Klinik.csproj.AssemblyReference.cache
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Resources\DataGridStyle.baml
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Resources\GlobalStyle.baml
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Views\Dashboard.baml
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\App.baml
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Views\Dashboard.g.cs
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Views\LoginDialog.g.cs
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Views\ObatView.g.cs
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Views\PembeliView.g.cs
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Views\TransaksiView.g.cs
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\App.g.cs
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Klinik_MarkupCompile.cache
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Klinik_MarkupCompile.lref
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Views\LoginDialog.baml
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Views\ObatView.baml
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Views\PembeliView.baml
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Views\TransaksiView.baml
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Klinik.g.resources
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Klinik.Properties.Resources.resources
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Klinik.csproj.GenerateResource.cache
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Klinik.csproj.CoreCompileInputs.cache
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Klinik.csproj.CopyComplete
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Klinik.exe
+F:\belajar_coding\c#\Klinik\Klinik\obj\Debug\Klinik.pdb

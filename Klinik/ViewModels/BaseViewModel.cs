@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Data.SQLite;
+using System.IO;
 
 namespace Klinik.ViewModels
 {
@@ -16,7 +17,9 @@ namespace Klinik.ViewModels
 
         public bool OpenConnection()
         {
-            var path = @"D:\fp pemrog\Klinik\klinik_fp.db";
+            string workingDirectory = Environment.CurrentDirectory;
+            string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+            var path = projectDirectory + @"\klinik_fp.db";
             StrConnection = $"Data Source={path};Version=3";
 
             Connection = new SQLiteConnection(StrConnection);
