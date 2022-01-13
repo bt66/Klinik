@@ -21,7 +21,6 @@ namespace Klinik.ViewModels
             string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
             var path = projectDirectory + @"\klinik_fp.db";
             StrConnection = $"Data Source={path};Version=3";
-
             Connection = new SQLiteConnection(StrConnection);
             Connection.Open();
 
